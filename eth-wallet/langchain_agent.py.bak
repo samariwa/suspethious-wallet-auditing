@@ -1,0 +1,101 @@
+import os
+import sys
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from parent directory
+parent_dir = Path(__file__).parent.parent
+load_dotenv(parent_dir / '.env')
+
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from wallet_risk_assessment import assess_wallet_risk
+
+# Initialize OpenAI LLM
+llm = ChatOpenAI(model="gpt-4", temperature=0.3)
+
+# Feature explanations - simplified and user-friendly
+DIMENSION_CONTEXT = {
+    "behavioral": {
+        "description": "analyzes the wallet's transaction patterns, frequency, timing, and volume",
+        "features": {
+            "Avg min between sent tnx": "how frequently the wallet sends transactions",
+            "Avg min between received tnx": "how frequently the wallet receives transactions",
+            "Time Diff between first and last (Mins)": "how long the wallet has been active",
+            "Sent tnx": "total number of transactions sent",
+            "Received Tnx": "total number of transactions received",
+            "Number of Created Contracts": "number of smart contracts deployed",
+            "total transactions (including tnx to create contract)": "overall transaction activity",
+            "total Ether sent": "total amount of ETH sent out",
+            "total ether received": "total amount of ETH received"
+        }
+    },
+    "association": {
+        "description": "checks if the wallet has interacted with known malicious addresses",
+        "features": {
+            "No. of txns from blacklisted addresses": "transactions received from flagged wallets",
+            "No. of txns to blacklisted addresses": "transactions sent to flagged wallets",
+            "Total ether sent to blacklisted addresses": "amount of ETH sent to suspicious wallets",
+            "Ratio of total sent to blacklisted addresses": "proportion of funds sent to risky addresses",
+            "Total ether received from blacklisted addresses": "amount of ETH received from suspicious wallets",
+            "Ratio of total received from blacklisted addresses": "proportion of funds from risky sources"
+        }
+    },
+    "contextual": {
+        "description": "examines transaction execution quality, gas usage, and failure patterns",
+        "features": {
+            "gas_price_std_dev": "consistency of gas prices used",
+            "total_failed_txns": "number of failed transactions",
+            "failed_contract_interaction_ratio": "percentage of failed smart contract calls",
+            "avg_gas_price_gwei": "average gas price paid"
+        }
+    }
+}
+
+# System prompt for the OpenAI agent
+PREFIX = (
+    "You are an Ethereum wallet scam analysis assistant. "
+    "You use a machine learning model to flag scam wallets based on transaction features. "
+    "When a wallet is flagged, you will explain the top contributing features in simple English. "
+    "Here is what the output means: "
+    "- 'flagged': The address is likely a scam based on its transaction patterns. "
+    "- 'not flagged': The address appears normal. "
+    "- The 'top contributing features' are the most important reasons the model flagged the address. "
+    "For each feature, explain what it means in the context of Ethereum transactions, using the following descriptions: "
+    "Avg min between sent tnx: Average time between sent transactions for account in minutes. "
+    "Avg min between received tnx: Average time between received transactions for account in minutes. "
+    "Time Diff between first and last (Mins): Time difference between the first and last transaction. "
+    "Sent tnx: Total number of sent normal transactions. "
+    "Received Tnx: Total number of received normal transactions. "
+    "Number of Created Contracts: Total number of created contract transactions. "
+    "Unique Received From Addresses: Total unique addresses from which account received transactions. "
+    "Unique Sent To Addresses: Total unique addresses to which account sent transactions. "
+    "min value received: Minimum value in Ether ever received. "
+    "max value received : Maximum value in Ether ever received. "
+    "avg val received: Average value in Ether ever received. "
+    "min val sent: Minimum value of Ether ever sent. "
+    "max val sent: Maximum value of Ether ever sent. "
+    "avg val sent: Average value of Ether ever sent. "
+    "min value sent to contract: Minimum value of Ether sent to a contract. "
+    "max val sent to contract: Maximum value of Ether sent to a contract. "
+    "avg value sent to contract: Average value of Ether sent to contracts. "
+    "total transactions (including tnx to create contract: Total number of transactions. "
+    "total Ether sent: Total Ether sent for account address. "
+    "total ether received: Total Ether received for account address. "
+    "total ether balance: Total Ether balance following enacted transactions. "
+    "If a feature is not listed, do your best to explain it based on its name. "
+    "Be clear and concise."
+)
+
+# Set up the OpenAI agent
+# Simplified version - directly use the risk assessment tool
+def run_scam_agent(address: str) -> str:
+    """
+    Runs the scam analysis and returns the output string for the given address, prefixed with SuspETHious.
+    """
+    try:
+        # Directly call the prediction tool
+        result = predict_address_scam_tool.invoke(address)
+        return f"SuspETHious: {result}" if not result.startswith("SuspETHious") else result
+    except Exception as e:
+        return f"SuspETHious: Error analyzing address: {str(e)}"

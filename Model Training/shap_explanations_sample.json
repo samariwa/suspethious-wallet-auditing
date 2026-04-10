@@ -1,0 +1,80 @@
+[
+  {
+    "prediction_index": 14,
+    "risk_score": 0.839744226842149,
+    "risk_classification": "HIGH RISK",
+    "actual_label": 1,
+    "dimensions": {
+      "behavioral": {
+        "contribution": 0.3625609874725342,
+        "probability": 0.9064024686813354,
+        "weight": 0.4,
+        "top_features": []
+      },
+      "association": {
+        "contribution": 0.4467717537870247,
+        "probability": 0.9928261195267216,
+        "weight": 0.45,
+        "top_features": []
+      },
+      "contextual": {
+        "contribution": 0.030411485582590103,
+        "probability": 0.20274323225021362,
+        "weight": 0.15,
+        "top_features": []
+      }
+    }
+  },
+  {
+    "prediction_index": 17,
+    "risk_score": 0.6412961648502946,
+    "risk_classification": "HIGH RISK",
+    "actual_label": 1,
+    "dimensions": {
+      "behavioral": {
+        "contribution": 0.3921613395214081,
+        "probability": 0.9804033041000366,
+        "weight": 0.4,
+        "top_features": []
+      },
+      "association": {
+        "contribution": 0.17214582280308005,
+        "probability": 0.38254627289573345,
+        "weight": 0.45,
+        "top_features": []
+      },
+      "contextual": {
+        "contribution": 0.07698900252580643,
+        "probability": 0.513260006904602,
+        "weight": 0.15,
+        "top_features": []
+      }
+    }
+  },
+  {
+    "prediction_index": 38,
+    "risk_score": 0.5723843440553035,
+    "risk_classification": "HIGH RISK",
+    "actual_label": 0,
+    "dimensions": {
+      "behavioral": {
+        "contribution": 0.360889732837677,
+        "probability": 0.9022243022918701,
+        "weight": 0.4,
+        "top_features": []
+      },
+      "association": {
+        "contribution": 0.16782141627276795,
+        "probability": 0.372936480606151,
+        "weight": 0.45,
+        "top_features": []
+      },
+      "contextual": {
+        "contribution": 0.04367319494485855,
+        "probability": 0.2911546230316162,
+        "weight": 0.15,
+        "top_features": []
+      }
+    }
+  }
+]
