@@ -9,7 +9,6 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-*.pkl
 *.h5
 .DS_Store
 node_modules/
