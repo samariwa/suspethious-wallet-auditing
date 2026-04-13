@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+from dotenv import load_dotenv
 from wallet_test import get_wallet_info, get_wallet_balance, list_tokens, get_network, send_transaction
 from wallet_risk_assessment import assess_wallet_risk, get_risk_explanation
 from langchain_agent import run_scam_agent
 import requests
 import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure static files
 current_dir = os.path.dirname(os.path.abspath(__file__))

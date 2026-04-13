@@ -54,15 +54,29 @@ class Configuration:
             return False
 
     def load_configuration(self):
-        """Load bot configuration from .yaml file"""
-        if not is_file(self.config_path):
-            self.create_empty_configuration()
-            self.load_configuration()
+        """Load bot configuration from environment variables or .yaml file"""
+        # Priority 1: Check environment variables for wallet details
+        env_wallet_address = os.getenv('WALLET_ADDRESS', '').strip()
+        env_secret_key = os.getenv('SECRET_KEY', '').strip()
+        
+        if env_wallet_address:
+            # Use environment variables if provided
+            self.eth_address = env_wallet_address
+            self.public_key = env_secret_key if env_secret_key else ''
+            self.network = int(os.getenv('NETWORK', '11155111'))
+            self.keystore_location = os.getenv('KEYSTORE_LOCATION', self.config_dir)
+            self.keystore_filename = '/keystore'
+            self.contracts = {}
         else:
-            with open(self.config_path, 'r') as yaml_file:
-                file = yaml.safe_load(yaml_file)
-            for key, value in file.items():
-                setattr(self, key, value)
+            # Fallback to config file
+            if not is_file(self.config_path):
+                self.create_empty_configuration()
+                self.load_configuration()
+            else:
+                with open(self.config_path, 'r') as yaml_file:
+                    file = yaml.safe_load(yaml_file)
+                for key, value in file.items():
+                    setattr(self, key, value)
         return self
 
     def create_empty_configuration(self):
