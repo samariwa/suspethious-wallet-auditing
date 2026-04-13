@@ -45,7 +45,7 @@ ALCHEMY_BASE_URL = f"{os.getenv('ALCHEMY_BASE_URL')}/{ALCHEMY_API_KEY}"
 
 # Model paths - resolve relative to project root (directory containing this script)
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR_NAME = os.getenv("MODEL_DIR", "Model Training")
+MODEL_DIR_NAME = os.getenv("MODEL_DIR", "Model_Training")
 MODEL_DIR = os.path.join(PROJECT_ROOT, MODEL_DIR_NAME) if not os.path.isabs(MODEL_DIR_NAME) else MODEL_DIR_NAME
 
 BEHAVIORAL_MODEL_PATH = os.path.join(MODEL_DIR, "behavioral_xgboost_optimized.pkl")
