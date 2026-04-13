@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from wallet_test import get_wallet_info, get_wallet_balance, list_tokens, get_network, send_transaction
 from wallet_risk_assessment import assess_wallet_risk, get_risk_explanation
@@ -6,7 +6,11 @@ from langchain_agent import run_scam_agent
 import requests
 import os
 
-app = Flask(__name__)
+# Configure static files
+current_dir = os.path.dirname(os.path.abspath(__file__))
+dist_path = os.path.join(current_dir, '..', 'frontend', 'blockchain-security-framework', 'dist')
+
+app = Flask(__name__, static_folder=dist_path, static_url_path='')
 CORS(app)
 
 @app.route("/api/wallet")
@@ -351,6 +355,21 @@ def api_send():
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Serve React static files
+@app.route("/")
+def serve_root():
+    return send_from_directory(dist_path, 'index.html')
+
+@app.route("/<path:path>")
+def serve_static(path):
+    if os.path.exists(os.path.join(dist_path, path)):
+        return send_from_directory(dist_path, path)
+    return send_from_directory(dist_path, 'index.html')
+
+@app.route("/healthz")
+def healthz():
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)

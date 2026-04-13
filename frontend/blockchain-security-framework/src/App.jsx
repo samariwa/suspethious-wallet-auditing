@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 
+// API URL configuration - use environment variable with fallback to localhost
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5001";
+
 function Modal({
   open,
   verdict,
@@ -362,12 +365,12 @@ export default function App() {
       setLoading(true);
       setError("");
       try {
-        const walletRes = await fetch("http://127.0.0.1:5001/api/wallet");
+        const walletRes = await fetch(`${API_URL}/api/wallet`);
         const walletData = await walletRes.json();
         setAddress(walletData.address);
         setPubKey(walletData.pub_key);
 
-        const balanceRes = await fetch("http://127.0.0.1:5001/api/balance");
+        const balanceRes = await fetch(`${API_URL}/api/balance`);
         const balanceData = await balanceRes.json();
         // Extract only the numeric value and token from the returned string
         // Example: "Balance on address 0x... is: 0ETH"
@@ -379,7 +382,7 @@ export default function App() {
         }
         setBalance(balanceValue);
 
-        const networkRes = await fetch("http://127.0.0.1:5001/api/network");
+        const networkRes = await fetch(`${API_URL}/api/network`);
         const networkData = await networkRes.json();
         setNetwork(networkData.network);
       } catch (err) {
@@ -405,7 +408,7 @@ export default function App() {
     setSending(false);
     setPassphrase("");
     try {
-      const res = await fetch("http://127.0.0.1:5001/api/predict", {
+      const res = await fetch(`${API_URL}/api/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -460,7 +463,7 @@ export default function App() {
     setError("");
     setSending(true);
     try {
-      const res = await fetch("http://127.0.0.1:5001/api/send", {
+      const res = await fetch(`${API_URL}/api/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -43,16 +43,22 @@ ETHERSCAN_BASE_URL = os.getenv("ETHERSCAN_BASE_URL", "https://api.etherscan.io/v
 ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")
 ALCHEMY_BASE_URL = f"{os.getenv('ALCHEMY_BASE_URL')}/{ALCHEMY_API_KEY}"
 
-# Model paths
-MODEL_DIR = os.getenv("MODEL_DIR", "Model Training")
-BEHAVIORAL_MODEL_PATH = f"{MODEL_DIR}/behavioral_xgboost_optimized.pkl"
-BEHAVIORAL_SCALER_PATH = f"{MODEL_DIR}/behavioral_scaler_optimized.pkl"
-ASSOCIATION_MODEL_PATH = f"{MODEL_DIR}/association_gradientboosting_optimized.pkl"
-ASSOCIATION_SCALER_PATH = f"{MODEL_DIR}/association_scaler_optimized.pkl"
-CONTEXTUAL_MODEL_PATH = f"{MODEL_DIR}/contextual_xgboost_optimized.pkl"
-CONTEXTUAL_SCALER_PATH = f"{MODEL_DIR}/contextual_scaler_optimized.pkl"
-ENSEMBLE_CONFIG_PATH = f"{MODEL_DIR}/ensemble_config_v1.json"
+# Model paths - resolve relative to project root (directory containing this script)
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR_NAME = os.getenv("MODEL_DIR", "Model Training")
+MODEL_DIR = os.path.join(PROJECT_ROOT, MODEL_DIR_NAME) if not os.path.isabs(MODEL_DIR_NAME) else MODEL_DIR_NAME
+
+BEHAVIORAL_MODEL_PATH = os.path.join(MODEL_DIR, "behavioral_xgboost_optimized.pkl")
+BEHAVIORAL_SCALER_PATH = os.path.join(MODEL_DIR, "behavioral_scaler_optimized.pkl")
+ASSOCIATION_MODEL_PATH = os.path.join(MODEL_DIR, "association_gradientboosting_optimized.pkl")
+ASSOCIATION_SCALER_PATH = os.path.join(MODEL_DIR, "association_scaler_optimized.pkl")
+CONTEXTUAL_MODEL_PATH = os.path.join(MODEL_DIR, "contextual_xgboost_optimized.pkl")
+CONTEXTUAL_SCALER_PATH = os.path.join(MODEL_DIR, "contextual_scaler_optimized.pkl")
+ENSEMBLE_CONFIG_PATH = os.path.join(MODEL_DIR, "ensemble_config_v1.json")
 UNIFIED_BLACKLIST_PATH = os.getenv("BLACKLIST_PATH", "blacklist_database.json")
+# Resolve blacklist path if relative
+if not os.path.isabs(UNIFIED_BLACKLIST_PATH):
+    UNIFIED_BLACKLIST_PATH = os.path.join(PROJECT_ROOT, UNIFIED_BLACKLIST_PATH)
 
 # Rate limiting
 ETHERSCAN_DELAY = float(os.getenv("ETHERSCAN_DELAY", "0.2"))  # 5 calls per second
