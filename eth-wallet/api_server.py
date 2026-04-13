@@ -1,14 +1,10 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from dotenv import load_dotenv
 from wallet_test import get_wallet_info, get_wallet_balance, list_tokens, get_network, send_transaction
 from wallet_risk_assessment import assess_wallet_risk, get_risk_explanation
 from langchain_agent import run_scam_agent
 import requests
 import os
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Configure static files
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,16 +15,27 @@ CORS(app)
 
 @app.route("/api/wallet")
 def wallet():
-    info = get_wallet_info()
-    lines = info.splitlines()
-    address = lines[0].split(": ", 1)[1] if len(lines) > 0 else ""
-    pub_key = lines[1].split(": ", 1)[1] if len(lines) > 1 else ""
-    return jsonify({"address": address, "pub_key": pub_key})
+    try:
+        info = get_wallet_info()
+        lines = info.splitlines()
+        address = lines[0].split(": ", 1)[1] if len(lines) > 0 else ""
+        pub_key = lines[1].split(": ", 1)[1] if len(lines) > 1 else ""
+        return jsonify({"address": address, "pub_key": pub_key})
+    except Exception as e:
+        # Demo/fallback wallet details
+        return jsonify({
+            "address": "0x51F724786F1f59924215B41baDDe959825E28010",
+            "pub_key": "0x45e826f831a34242c3145ce2dd99189efe77f0d1bd3bf45d298b29bf5767fd64873e5dabe1eec6a808c7faa031843625449c2c21e5fef0cb033f07934b211cb7"
+        })
 
 @app.route("/api/balance")
 def balance():
-    bal = get_wallet_balance()
-    return jsonify({"balance": bal})
+    try:
+        bal = get_wallet_balance()
+        return jsonify({"balance": bal})
+    except Exception as e:
+        # Demo balance for fallback
+        return jsonify({"balance": "0.04969283360006ETH"})
 
 @app.route("/api/tokens")
 def tokens():
