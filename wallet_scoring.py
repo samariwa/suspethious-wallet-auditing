@@ -48,6 +48,13 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR_NAME = os.getenv("MODEL_DIR", "Model_Training")
 MODEL_DIR = os.path.join(PROJECT_ROOT, MODEL_DIR_NAME) if not os.path.isabs(MODEL_DIR_NAME) else MODEL_DIR_NAME
 
+# Debug output
+print(f"[DEBUG] wallet_scoring.py location: {__file__}")
+print(f"[DEBUG] PROJECT_ROOT: {PROJECT_ROOT}")
+print(f"[DEBUG] MODEL_DIR_NAME: {MODEL_DIR_NAME}")
+print(f"[DEBUG] MODEL_DIR: {MODEL_DIR}")
+print(f"[DEBUG] MODEL_DIR exists: {os.path.exists(MODEL_DIR)}")
+
 BEHAVIORAL_MODEL_PATH = os.path.join(MODEL_DIR, "behavioral_xgboost_optimized.pkl")
 BEHAVIORAL_SCALER_PATH = os.path.join(MODEL_DIR, "behavioral_scaler_optimized.pkl")
 ASSOCIATION_MODEL_PATH = os.path.join(MODEL_DIR, "association_gradientboosting_optimized.pkl")

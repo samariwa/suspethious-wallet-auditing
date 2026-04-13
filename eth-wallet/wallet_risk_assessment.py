@@ -25,9 +25,19 @@ from wallet_scoring import (
 
 # Load models once at module initialization
 print("Loading ensemble models...")
-models = load_models()
-blacklist = load_blacklist()
-print(f"✓ Models loaded, {len(blacklist)} blacklisted addresses in database")
+try:
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Parent directory: {parent_dir}")
+    print(f"Checking for Model_Training at: {os.path.join(parent_dir, 'Model_Training')}")
+    
+    models = load_models()
+    blacklist = load_blacklist()
+    print(f"✓ Models loaded, {len(blacklist)} blacklisted addresses in database")
+except Exception as e:
+    print(f"✗ Error loading models: {e}")
+    print(f"Using fallback - models will fail at runtime if needed")
+    models = None
+    blacklist = []
 
 # Restore original working directory
 os.chdir(original_cwd)
