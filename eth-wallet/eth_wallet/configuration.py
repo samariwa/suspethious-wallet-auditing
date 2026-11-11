@@ -63,7 +63,31 @@ class Configuration:
                 file = yaml.safe_load(yaml_file)
             for key, value in file.items():
                 setattr(self, key, value)
+            self.apply_env_overrides()
         return self
+
+    def apply_env_overrides(self):
+        """
+        Let environment variables supply the wallet, for hosts with ephemeral
+        disks (e.g. Render) where ~/.eth-wallet is wiped on every deploy.
+          ETH_WALLET_ADDRESS     - wallet address
+          ETH_WALLET_PUBLIC_KEY  - wallet public key
+          ETH_NETWORK            - chain id (e.g. 11155111 for Sepolia)
+          ETH_KEYSTORE_JSON      - encrypted keystore JSON (needed to send)
+        """
+        if os.getenv('ETH_WALLET_ADDRESS'):
+            self.eth_address = os.getenv('ETH_WALLET_ADDRESS').strip()
+        if os.getenv('ETH_WALLET_PUBLIC_KEY'):
+            self.public_key = os.getenv('ETH_WALLET_PUBLIC_KEY').strip()
+        if os.getenv('ETH_NETWORK'):
+            self.network = int(os.getenv('ETH_NETWORK'))
+        keystore_json = os.getenv('ETH_KEYSTORE_JSON')
+        if keystore_json:
+            keystore_path = self.keystore_location + self.keystore_filename
+            if not is_file(keystore_path):
+                create_directory(self.keystore_location)
+                with open(keystore_path, 'w') as keystore_file:
+                    keystore_file.write(keystore_json.strip())
 
     def create_empty_configuration(self):
         """
