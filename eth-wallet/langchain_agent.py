@@ -11,8 +11,15 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from wallet_risk_assessment import assess_wallet_risk
 
-# Initialize OpenAI LLM
-llm = ChatOpenAI(model="gpt-4", temperature=0.3)
+# Initialize OpenAI LLM. Override the model with OPENAI_MODEL in .env when
+# OpenAI retires this one. Note: reasoning models (e.g. gpt-5.5, gpt-5-mini)
+# reject custom temperatures; set OPENAI_TEMPERATURE= (empty) to omit it.
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
+_temperature = os.getenv("OPENAI_TEMPERATURE", "0.3")
+llm = ChatOpenAI(
+    model=OPENAI_MODEL,
+    **({"temperature": float(_temperature)} if _temperature else {}),
+)
 
 # Feature explanations - simplified and user-friendly
 DIMENSION_CONTEXT = {
