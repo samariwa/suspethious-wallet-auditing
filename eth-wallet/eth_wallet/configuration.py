@@ -70,15 +70,21 @@ class Configuration:
         """
         Let environment variables supply the wallet, for hosts with ephemeral
         disks (e.g. Render) where ~/.eth-wallet is wiped on every deploy.
-          ETH_WALLET_ADDRESS     - wallet address
-          ETH_WALLET_PUBLIC_KEY  - wallet public key
+          ETH_WALLET_ADDRESS     - wallet address (WALLET_ADDRESS also accepted)
+          ETH_WALLET_PUBLIC_KEY  - wallet public key (WALLET_PUBLIC_KEY or
+                                   SECRET_KEY also accepted, as in the original
+                                   Render setup)
           ETH_NETWORK            - chain id (e.g. 11155111 for Sepolia)
           ETH_KEYSTORE_JSON      - encrypted keystore JSON (needed to send)
         """
-        if os.getenv('ETH_WALLET_ADDRESS'):
-            self.eth_address = os.getenv('ETH_WALLET_ADDRESS').strip()
-        if os.getenv('ETH_WALLET_PUBLIC_KEY'):
-            self.public_key = os.getenv('ETH_WALLET_PUBLIC_KEY').strip()
+        address = os.getenv('ETH_WALLET_ADDRESS') or os.getenv('WALLET_ADDRESS')
+        if address and address.strip():
+            self.eth_address = address.strip().strip('"\'')
+        public_key = (os.getenv('ETH_WALLET_PUBLIC_KEY')
+                      or os.getenv('WALLET_PUBLIC_KEY')
+                      or os.getenv('SECRET_KEY'))
+        if public_key and public_key.strip():
+            self.public_key = public_key.strip().strip('"\'')
         if os.getenv('ETH_NETWORK'):
             self.network = int(os.getenv('ETH_NETWORK'))
         keystore_json = os.getenv('ETH_KEYSTORE_JSON')
